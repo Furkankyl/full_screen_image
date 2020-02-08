@@ -2,7 +2,7 @@
 
 Full screen photo viewer. It shuts off when scrolling vertically. Can work with Hero widget
 
-<img src="https://github.com/Furkankyl/full_screen_image/blob/master/screen.png" width="35%" />   
+<img src="https://raw.githubusercontent.com/Furkankyl/full_screen_image/master/screen.png" width="35%" />   
 
 ## Installation
 
@@ -18,7 +18,7 @@ Check out the [example](https://github.com/Furkankyl/full_screen_image/tree/mast
 # Flutter
 
 #### Full screen image:
-<img src="https://github.com/Furkankyl/full_screen_image/blob/master/1.gif" width="35%" />   
+<img src="https://raw.githubusercontent.com/Furkankyl/full_screen_image/master/1.gif" width="35%" />   
 
 ``` dart
   FullScreenWidget(
@@ -34,7 +34,7 @@ Check out the [example](https://github.com/Furkankyl/full_screen_image/tree/mast
 ```
 
 #### Full screen with hero:
-<img src="https://github.com/Furkankyl/full_screen_image/blob/master/2.gif" width="35%" />   
+<img src="https://raw.githubusercontent.com/Furkankyl/full_screen_image/master/2.gif" width="35%" />   
 
 ``` dart
 FullScreenWidget(
@@ -54,7 +54,7 @@ FullScreenWidget(
 #### Small image:
 if you don't want widget full screen then use center widget
  <br>
-<img src="https://github.com/Furkankyl/full_screen_image/blob/master/3.gif" width="35%" />
+<img src="https://raw.githubusercontent.com/Furkankyl/full_screen_image/master/3.gif" width="35%" />
 ``` dart
  FullScreenWidget(
         child: Center(
@@ -72,7 +72,7 @@ if you don't want widget full screen then use center widget
       );
 ```
 #### Custom background color:
-<img src="https://github.com/Furkankyl/full_screen_image/blob/master/4.gif" width="35%" />   
+<img src="https://raw.githubusercontent.com/Furkankyl/full_screen_image/master/4.gif" width="35%" />   
 
 ``` dart
 FullScreenWidget(
@@ -93,7 +93,7 @@ FullScreenWidget(
 
 ```
 #### Non transparent widget:
-<img src="https://github.com/Furkankyl/full_screen_image/blob/master/5.gif" width="35%" />   
+<img src="https://raw.githubusercontent.com/Furkankyl/full_screen_image/master/5.gif" width="35%" />   
 
 ``` dart
 FullScreenWidget(
@@ -115,7 +115,7 @@ FullScreenWidget(
 
 ```
 #### Custom widget:
-<img src="https://github.com/Furkankyl/full_screen_image/blob/master/6.gif" width="35%" />   
+<img src="https://raw.githubusercontent.com/Furkankyl/full_screen_image/master/6.gif" width="35%" />   
 
 ``` dart
   FullScreenWidget(
