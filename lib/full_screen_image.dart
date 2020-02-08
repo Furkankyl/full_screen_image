@@ -20,7 +20,7 @@ class FullScreenWidget extends StatelessWidget {
       onTap: (){
         Navigator.push(context, PageRouteBuilder(
             opaque: false,
-            barrierColor: Colors.white.withOpacity(0),
+            barrierColor: backgroundIsTransparent?Colors.white.withOpacity(0):backgroundColor,
             pageBuilder: (BuildContext context,_,__) {
               return FullScreenPage(
                 child: child,
@@ -37,6 +37,7 @@ class FullScreenWidget extends StatelessWidget {
 
 
 }
+
 
 
 
@@ -162,14 +163,7 @@ class _FullScreenPageState extends State<FullScreenPage> {
                 bottom: 0 - positionYDelta,
                 left: 0,
                 right: 0,
-                child: Container(
-                  height: MediaQuery.of(context).size.width,
-                  width: MediaQuery.of(context).size.width,
-                  child: Opacity(
-                    opacity: opacity==0?0.5:opacity,
-                    child: widget.child,
-                  ),
-                ),
+                child: widget.child,
               )
             ],
           ),
