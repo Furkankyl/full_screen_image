@@ -2,82 +2,161 @@
 
 Full screen photo viewer. It shuts off when scrolling vertically. Can work with Hero widget
 
-## Example
-
-<img src="https://github.com/Furkankyl/full_screen_image/blob/master/1.gif" width="35%" />          <img src="https://github.com/Furkankyl/full_screen_image/blob/master/2.gif" width="35%"  />
-<img src="https://github.com/Furkankyl/full_screen_image/blob/master/3.gif" width="35%" />          <img src="https://github.com/Furkankyl/full_screen_image/blob/master/4.gif" width="35%"  />
-<img src="https://github.com/Furkankyl/full_screen_image/blob/master/5.gif" width="35%" />          <img src="https://github.com/Furkankyl/full_screen_image/blob/master/6.gif" width="35%"  />
+<img src="https://github.com/Furkankyl/full_screen_image/blob/master/screen.png" width="35%" />   
 
 ## Installation
 
-To use this plugin, add twitter_qr_scanner as a [dependency in your pubspec.yaml file.](https://flutter.dev/docs/development/packages-and-plugins/using-packages)
+To use this plugin, add full_screen_image as a [dependency in your pubspec.yaml file.](https://flutter.dev/docs/development/packages-and-plugins/using-packages)
 
 ```bash
-twitter_qr_scanner: any
+full_screen_image: any
 ```
 
 ## Getting Started
-Check out the [example](https://github.com/Furkankyl/twitter_qr_scanner/tree/master/example) app using twitter_qr_scanner.
-
-# Android Integration
-
-This plugin work only level greater then sdk version 21.
-
-# iOS Integration
-In order to use this plugin, add the following to your Info.plist file:
-
-```plist
-<key>io.flutter.embedded_views_preview</key>
-<true/>
-
-```
-
-
-
+Check out the [example](https://github.com/Furkankyl/full_screen_image/tree/master/example) app using full_screen_image.
 
 # Flutter
-İnit:
+
+#### Full screen image:
+<img src="https://github.com/Furkankyl/full_screen_image/blob/master/1.gif" width="35%" />   
+
 ``` dart
-  GlobalKey qrKey = GlobalKey();
-  QRViewController controller;
+  FullScreenWidget(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Image.asset(
+            "assets/image1.jpg",
+            fit: BoxFit.cover,
+          ),
+        ),
+      )
 
 ```
 
-Widget:
-``` dart
-QRView(
-          key: qrKey,
-          overlay: QrScannerOverlayShape(
-              borderRadius: 16,
-              borderColor: Colors.white,
-              borderLength: 120,
-              borderWidth: 10,
-              cutOutSize: 250),
-          onQRViewCreated: _onQRViewCreate,
-          data: "QR TEXT",// Showing qr code data
-        )
-```
+#### Full screen with hero:
+<img src="https://github.com/Furkankyl/full_screen_image/blob/master/2.gif" width="35%" />   
 
-Scan:
 ``` dart
-  void _onQRViewCreate(QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        print("QRCode: $scanData");
-      });
-    });
-  }
+FullScreenWidget(
+        child: Hero(
+          tag: "customTag",
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.asset(
+              "assets/image2.jpg",
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      );
+
 ```
-Dispose:
+#### Small image:
+ if you don't want widget full screen then use center widget
+<img src="https://github.com/Furkankyl/full_screen_image/blob/master/3.gif" width="35%" />   
 ``` dart
-   @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
-  }
+ FullScreenWidget(
+        child: Center(
+          child: Hero(
+            tag: "smallImage",
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                "assets/image3.jpg",
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+      );
+```
+#### Custom background color:
+<img src="https://github.com/Furkankyl/full_screen_image/blob/master/4.gif" width="35%" />   
+
+``` dart
+FullScreenWidget(
+        backgroundColor: Colors.purple,
+        child: Center(
+          child: Hero(
+            tag: "customBackground",
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                "assets/image3.jpg",
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+      );
+
+```
+#### Non transparent widget:
+<img src="https://github.com/Furkankyl/full_screen_image/blob/master/5.gif" width="35%" />   
+
+``` dart
+FullScreenWidget(
+        backgroundColor: Colors.purple,
+        backgroundIsTransparent: false,
+        child: Center(
+          child: Hero(
+            tag: "nonTransparent",
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                "assets/image3.jpg",
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+      );
+
+```
+#### Custom widget:
+<img src="https://github.com/Furkankyl/full_screen_image/blob/master/6.gif" width="35%" />   
+
+``` dart
+  FullScreenWidget(
+        child: SafeArea(
+          child: Card(
+            elevation: 4,
+            child: Container(
+              height: 350,
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Hero(
+                    tag: "customWidget",
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.asset(
+                        "assets/image3.jpg",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Text('Lorem text',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Expanded(
+                    child: Text(
+                      lorem,
+                    ),
+                  ),
+
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
 
 ```
 
 ## License
-[Apache](https://github.com/Furkankyl/twitter_qr_scanner/blob/master/LICENSE)
+[Apache](https://github.com/Furkankyl/full_screen_image/blob/master/LICENSE)
