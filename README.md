@@ -52,8 +52,9 @@ FullScreenWidget(
 
 ```
 #### Small image:
- if you don't want widget full screen then use center widget
-<img src="https://github.com/Furkankyl/full_screen_image/blob/master/3.gif" width="35%" />   
+if you don't want widget full screen then use center widget
+ <br>
+<img src="https://github.com/Furkankyl/full_screen_image/blob/master/3.gif" width="35%" />
 ``` dart
  FullScreenWidget(
         child: Center(
