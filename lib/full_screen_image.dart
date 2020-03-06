@@ -68,10 +68,13 @@ class _FullScreenPageState extends State<FullScreenPage> {
 
   double disposeLimit = 150;
 
+  Duration animationDuration;
+
   @override
   void initState() {
     super.initState();
     setDisposeLevel();
+    animationDuration = Duration.zero;
   }
 
   setDisposeLevel() {
@@ -122,10 +125,18 @@ class _FullScreenPageState extends State<FullScreenPage> {
       Navigator.of(context).pop();
     } else {
       setState(() {
+        animationDuration = Duration(milliseconds: 300);
         opacity = 1;
         positionYDelta = 0;
       });
+
+      Future.delayed(animationDuration).then((_){
+        setState(() {
+          animationDuration = Duration.zero;
+        });
+      });
     }
+
   }
 
   @override
@@ -145,7 +156,9 @@ class _FullScreenPageState extends State<FullScreenPage> {
           ),
           child: Stack(
             children: <Widget>[
-              Positioned(
+              AnimatedPositioned(
+                duration: animationDuration,
+                curve: Curves.fastOutSlowIn,
                 top: 0 + positionYDelta,
                 bottom: 0 - positionYDelta,
                 left: 0,
