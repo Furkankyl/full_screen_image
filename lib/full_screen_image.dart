@@ -3,38 +3,54 @@ library full_screen_image;
 import 'package:flutter/material.dart';
 
 class FullScreenWidget extends StatelessWidget {
-  FullScreenWidget(
-      {@required this.child,
-      this.backgroundColor = Colors.black,
-      this.backgroundIsTransparent = true,
-      this.disposeLevel});
-
+  final Widget Function(
+          BuildContext context, bool isPreview, Widget staticChild)
+      builderWithChild;
   final Widget child;
+
+  final Widget Function(BuildContext context, bool isPreview) builder;
+
   final Color backgroundColor;
   final bool backgroundIsTransparent;
   final DisposeLevel disposeLevel;
+
+  const FullScreenWidget({
+    Key key,
+    this.builderWithChild,
+    this.builder,
+    this.backgroundColor,
+    this.backgroundIsTransparent = true,
+    this.disposeLevel,
+    this.child,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            PageRouteBuilder(
-                opaque: false,
-                barrierColor: backgroundIsTransparent
-                    ? Colors.white.withOpacity(0)
-                    : backgroundColor,
-                pageBuilder: (BuildContext context, _, __) {
-                  return FullScreenPage(
-                    child: child,
-                    backgroundColor: backgroundColor,
-                    backgroundIsTransparent: backgroundIsTransparent,
-                    disposeLevel: disposeLevel,
-                  );
-                }));
+          context,
+          PageRouteBuilder(
+            opaque: false,
+            barrierColor: backgroundIsTransparent
+                ? Colors.white.withOpacity(0)
+                : backgroundColor,
+            pageBuilder: (BuildContext context, _, __) {
+              return FullScreenPage(
+                child: child == null
+                    ? builder(context, false)
+                    : builderWithChild(context, false, child),
+                backgroundColor: backgroundColor,
+                backgroundIsTransparent: backgroundIsTransparent,
+                disposeLevel: disposeLevel,
+              );
+            },
+          ),
+        );
       },
-      child: child,
+      child: child == null
+          ? builder(context, true)
+          : builderWithChild(context, true, child),
     );
   }
 }
@@ -42,11 +58,12 @@ class FullScreenWidget extends StatelessWidget {
 enum DisposeLevel { High, Medium, Low }
 
 class FullScreenPage extends StatefulWidget {
-  FullScreenPage(
-      {@required this.child,
-      this.backgroundColor = Colors.black,
-      this.backgroundIsTransparent = true,
-      this.disposeLevel = DisposeLevel.Medium});
+  FullScreenPage({
+    this.child,
+    this.backgroundColor = Colors.black,
+    this.backgroundIsTransparent = true,
+    this.disposeLevel = DisposeLevel.Medium,
+  });
 
   final Widget child;
   final Color backgroundColor;
@@ -77,7 +94,7 @@ class _FullScreenPageState extends State<FullScreenPage> {
     animationDuration = Duration.zero;
   }
 
-  setDisposeLevel() {
+  void setDisposeLevel() {
     setState(() {
       if (widget.disposeLevel == DisposeLevel.High)
         disposeLimit = 300;
@@ -102,12 +119,10 @@ class _FullScreenPageState extends State<FullScreenPage> {
     });
   }
 
-  setOpacity() {
+  void setOpacity() {
     double tmp = positionYDelta < 0
         ? 1 - ((positionYDelta / 1000) * -1)
         : 1 - (positionYDelta / 1000);
-    print(tmp);
-
     if (tmp > 1)
       opacity = 1;
     else if (tmp < 0)
@@ -120,7 +135,7 @@ class _FullScreenPageState extends State<FullScreenPage> {
     }
   }
 
-  _endVerticalDrag(DragEndDetails details) {
+  void _endVerticalDrag(DragEndDetails details) {
     if (positionYDelta > disposeLimit || positionYDelta < -disposeLimit) {
       Navigator.of(context).pop();
     } else {
@@ -130,13 +145,12 @@ class _FullScreenPageState extends State<FullScreenPage> {
         positionYDelta = 0;
       });
 
-      Future.delayed(animationDuration).then((_){
+      Future.delayed(animationDuration).then((_) {
         setState(() {
           animationDuration = Duration.zero;
         });
       });
     }
-
   }
 
   @override
