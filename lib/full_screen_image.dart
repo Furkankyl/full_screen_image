@@ -2,39 +2,56 @@ library full_screen_image;
 
 import 'package:flutter/material.dart';
 
-class FullScreenWidget extends StatelessWidget {
-  FullScreenWidget(
-    {required this.child,
-      this.backgroundColor = Colors.black,
-      this.backgroundIsTransparent = true,
-      required this.disposeLevel});
+class FullScreenWidget extends StatefulWidget {
+  FullScreenWidget({
+    required this.child,
+    this.fullscreenChild,
+    this.backgroundColor = Colors.black,
+    this.backgroundIsTransparent = true,
+    required this.disposeLevel,
+  });
 
   final Widget child;
+  final Widget? fullscreenChild;
   final Color backgroundColor;
   final bool backgroundIsTransparent;
   final DisposeLevel disposeLevel;
+
+  _FullScreenWidgetState createState() => _FullScreenWidgetState();
+}
+
+class _FullScreenWidgetState extends State<FullScreenWidget> {
+  bool isOpenFullScreenMode = false;
+
+  void changeOpenFullScreenMode (value) {
+    setState(() {
+      isOpenFullScreenMode = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        changeOpenFullScreenMode(true);
         Navigator.push(
             context,
             PageRouteBuilder(
                 opaque: false,
-                barrierColor: backgroundIsTransparent
+                barrierColor: widget.backgroundIsTransparent
                     ? Colors.white.withOpacity(0)
-                    : backgroundColor,
+                    : widget.backgroundColor,
                 pageBuilder: (BuildContext context, _, __) {
                   return FullScreenPage(
-                    child: child,
-                    backgroundColor: backgroundColor,
-                    backgroundIsTransparent: backgroundIsTransparent,
-                    disposeLevel: disposeLevel,
+                    child: widget.fullscreenChild != null ? widget.fullscreenChild! : widget.child,
+                    backgroundColor: widget.backgroundColor,
+                    backgroundIsTransparent: widget.backgroundIsTransparent,
+                    disposeLevel: widget.disposeLevel,
+                    changeOpenFullScreenMode: changeOpenFullScreenMode,
                   );
                 }));
       },
-      child: child,
+      child: widget.child,
     );
   }
 }
@@ -42,16 +59,19 @@ class FullScreenWidget extends StatelessWidget {
 enum DisposeLevel { High, Medium, Low }
 
 class FullScreenPage extends StatefulWidget {
-  FullScreenPage(
-    {required this.child,
-      this.backgroundColor = Colors.black,
-      this.backgroundIsTransparent = true,
-      this.disposeLevel = DisposeLevel.Medium});
+  FullScreenPage({
+    required this.child,
+    this.changeOpenFullScreenMode,
+    this.backgroundColor = Colors.black,
+    this.backgroundIsTransparent = true,
+    this.disposeLevel = DisposeLevel.Medium
+  });
 
   final Widget child;
   final Color backgroundColor;
   final bool backgroundIsTransparent;
   final DisposeLevel disposeLevel;
+  final Function? changeOpenFullScreenMode;
 
   @override
   _FullScreenPageState createState() => _FullScreenPageState();
@@ -123,6 +143,10 @@ class _FullScreenPageState extends State<FullScreenPage> {
   _endVerticalDrag(DragEndDetails details) {
     if (positionYDelta > disposeLimit || positionYDelta < -disposeLimit) {
       Navigator.of(context).pop();
+
+      if(widget.changeOpenFullScreenMode != null) {
+        widget.changeOpenFullScreenMode!(false);
+      }
     } else {
       setState(() {
         animationDuration = Duration(milliseconds: 300);
