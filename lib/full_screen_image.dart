@@ -90,6 +90,12 @@ class _FullScreenPageState extends State<FullScreenPage> {
 
   late Duration animationDuration;
 
+  double opacityLevel = 1.0;
+
+  void _changeOpacity() {
+    setState(() => opacityLevel = opacityLevel == 0 ? 1.0 : 0.0);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -108,15 +114,15 @@ class _FullScreenPageState extends State<FullScreenPage> {
     });
   }
 
-  void _startVerticalDrag(details) {
+  void _startVerticalDrag(PointerDownEvent details) {
     setState(() {
-      initialPositionY = details.globalPosition.dy;
+      initialPositionY = details.position.dy.toDouble();
     });
   }
 
-  void _whileVerticalDrag(details) {
+  void _whileVerticalDrag(PointerMoveEvent details) {
     setState(() {
-      currentPositionY = details.globalPosition.dy;
+      currentPositionY = details.position.dy.toDouble();
       positionYDelta = currentPositionY - initialPositionY;
       setOpacity();
     });
@@ -126,8 +132,6 @@ class _FullScreenPageState extends State<FullScreenPage> {
     double tmp = positionYDelta < 0
         ? 1 - ((positionYDelta / 1000) * -1)
         : 1 - (positionYDelta / 1000);
-    print(tmp);
-
     if (tmp > 1)
       opacity = 1;
     else if (tmp < 0)
@@ -140,9 +144,21 @@ class _FullScreenPageState extends State<FullScreenPage> {
     }
   }
 
-  _endVerticalDrag(DragEndDetails details) {
+  _endVerticalDrag(PointerUpEvent details) {
     if (positionYDelta > disposeLimit || positionYDelta < -disposeLimit) {
       Navigator.of(context).pop();
+      _changeOpacity();
+      setState(() {
+        animationDuration = Duration(milliseconds: 200);
+        opacity = 0;
+        positionYDelta = positionYDelta > disposeLimit ? positionYDelta + 330 : positionYDelta - 330;
+      });
+
+      Future.delayed(animationDuration).then((_){
+        setState(() {
+          animationDuration = Duration.zero;
+        });
+      });
 
       if(widget.changeOpenFullScreenMode != null) {
         widget.changeOpenFullScreenMode!(false);
@@ -169,10 +185,10 @@ class _FullScreenPageState extends State<FullScreenPage> {
       backgroundColor: widget.backgroundIsTransparent
           ? Colors.transparent
           : widget.backgroundColor,
-      body: GestureDetector(
-        onVerticalDragStart: (details) => _startVerticalDrag(details),
-        onVerticalDragUpdate: (details) => _whileVerticalDrag(details),
-        onVerticalDragEnd: (details) => _endVerticalDrag(details),
+      body: Listener(
+        onPointerDown: _startVerticalDrag,
+        onPointerMove: _whileVerticalDrag,
+        onPointerUp: _endVerticalDrag,
         child: Container(
           color: widget.backgroundColor.withOpacity(opacity),
           constraints: BoxConstraints.expand(
@@ -188,7 +204,39 @@ class _FullScreenPageState extends State<FullScreenPage> {
                 left: 0,
                 right: 0,
                 child: widget.child,
-              )
+              ),
+              Positioned(
+                top: 76,
+                right: 20,
+                child: AnimatedOpacity(
+                  opacity: opacityLevel,
+                  duration: Duration(milliseconds: 300),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.5),
+                      borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                    ),
+                    child: MaterialButton(
+                      onPressed: (){
+                        _changeOpacity();
+                        Navigator.pop(context);
+                        if(widget.changeOpenFullScreenMode != null) {
+                          widget.changeOpenFullScreenMode!(false);
+                        }
+                      },
+                      shape: CircleBorder(),
+                      padding: EdgeInsets.all(5),
+                      child: Icon(
+                        Icons.close_rounded,
+                        size: 22,
+                        color: Color(0xFF00172C).withOpacity(0.9),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -196,3 +244,4 @@ class _FullScreenPageState extends State<FullScreenPage> {
     );
   }
 }
+
