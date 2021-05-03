@@ -1,18 +1,17 @@
 library full_screen_image;
 
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 
 class FullScreenWidget extends StatefulWidget {
   FullScreenWidget({
     required this.child,
-    this.fullscreenChild,
     this.backgroundColor = Colors.black,
     this.backgroundIsTransparent = true,
     required this.disposeLevel,
   });
 
   final Widget child;
-  final Widget? fullscreenChild;
   final Color backgroundColor;
   final bool backgroundIsTransparent;
   final DisposeLevel disposeLevel;
@@ -43,13 +42,15 @@ class _FullScreenWidgetState extends State<FullScreenWidget> {
                     : widget.backgroundColor,
                 pageBuilder: (BuildContext context, _, __) {
                   return FullScreenPage(
-                    child: widget.fullscreenChild != null ? widget.fullscreenChild! : widget.child,
                     backgroundColor: widget.backgroundColor,
                     backgroundIsTransparent: widget.backgroundIsTransparent,
                     disposeLevel: widget.disposeLevel,
                     changeOpenFullScreenMode: changeOpenFullScreenMode,
+                    child: widget.child,
                   );
-                }));
+                }
+            )
+        );
       },
       child: widget.child,
     );
@@ -92,14 +93,33 @@ class _FullScreenPageState extends State<FullScreenPage> {
 
   double opacityLevel = 1.0;
 
+  late PhotoViewScaleStateController scaleStateController;
+
+  bool isScaleStateZooming = false;
+
   void _changeOpacity() {
     setState(() => opacityLevel = opacityLevel == 0 ? 1.0 : 0.0);
+  }
+
+  void onScaleState(PhotoViewScaleState scaleState) {
+    setState(() {
+      isScaleStateZooming = scaleState.isScaleStateZooming;
+    });
+  }
+
+  @override
+  void dispose() {
+    scaleStateController.dispose();
+    super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
     setDisposeLevel();
+    scaleStateController = PhotoViewScaleStateController()
+      ..outputScaleStateStream.listen(onScaleState);
+    super.initState();
     animationDuration = Duration.zero;
   }
 
@@ -121,11 +141,13 @@ class _FullScreenPageState extends State<FullScreenPage> {
   }
 
   void _whileVerticalDrag(PointerMoveEvent details) {
-    setState(() {
-      currentPositionY = details.position.dy.toDouble();
-      positionYDelta = currentPositionY - initialPositionY;
-      setOpacity();
-    });
+    if (!isScaleStateZooming) {
+      setState(() {
+        currentPositionY = details.position.dy.toDouble();
+        positionYDelta = currentPositionY - initialPositionY;
+        setOpacity();
+      });
+    }
   }
 
   setOpacity() {
@@ -145,13 +167,13 @@ class _FullScreenPageState extends State<FullScreenPage> {
   }
 
   _endVerticalDrag(PointerUpEvent details) {
-    if (positionYDelta > disposeLimit || positionYDelta < -disposeLimit) {
+    if (!isScaleStateZooming && (positionYDelta > disposeLimit || positionYDelta < -disposeLimit)) {
       Navigator.of(context).pop();
       _changeOpacity();
       setState(() {
-        animationDuration = Duration(milliseconds: 200);
+        animationDuration = Duration(milliseconds: 300);
         opacity = 0;
-        positionYDelta = positionYDelta > disposeLimit ? positionYDelta + 330 : positionYDelta - 330;
+        positionYDelta = positionYDelta > disposeLimit ? positionYDelta + 530 : positionYDelta - 530;
       });
 
       Future.delayed(animationDuration).then((_){
@@ -203,7 +225,24 @@ class _FullScreenPageState extends State<FullScreenPage> {
                 bottom: 0 - positionYDelta,
                 left: 0,
                 right: 0,
-                child: widget.child,
+                child: PhotoView.customChild(
+                  scaleStateController: scaleStateController,
+                  gestureDetectorBehavior: HitTestBehavior.deferToChild,
+                  tightMode: true,
+                  childSize: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
+                  child: widget.child,
+                  backgroundDecoration: BoxDecoration(color: Colors.transparent),
+                  customSize: MediaQuery.of(context).size,
+                  heroAttributes: const PhotoViewHeroAttributes(
+                    tag: "photo",
+                    transitionOnUserGestures: true,
+                  ),
+                  enableRotation: false,
+                  minScale: PhotoViewComputedScale.contained * 0.8,
+                  maxScale: PhotoViewComputedScale.covered * 3,
+                  initialScale: PhotoViewComputedScale.contained,
+                  basePosition: Alignment.center,
+                ),
               ),
               Positioned(
                 top: 76,
