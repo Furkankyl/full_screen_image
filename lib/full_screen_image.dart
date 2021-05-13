@@ -1,4 +1,4 @@
-library full_screen_image;
+library full_screen_image_null_safe;
 
 import 'package:flutter/material.dart';
 
@@ -15,7 +15,7 @@ class FullScreenWidget extends StatelessWidget {
   final DisposeLevel? disposeLevel;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     return GestureDetector(
       onTap: () {
         Navigator.push(

@@ -6,10 +6,10 @@ Full screen photo viewer. It shuts off when scrolling vertically. Can work with 
 
 ## Installation
 
-To use this plugin, add full_screen_image as a [dependency in your pubspec.yaml file.](https://flutter.dev/docs/development/packages-and-plugins/using-packages)
+To use this plugin, add full_screen_image_null_safe as a [dependency in your pubspec.yaml file.](https://flutter.dev/docs/development/packages-and-plugins/using-packages)
 
 ```bash
-full_screen_image: any
+full_screen_image_null_safe: any
 ```
 
 ## Getting Started
