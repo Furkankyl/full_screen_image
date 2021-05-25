@@ -1,10 +1,10 @@
-library full_screen_image;
+library full_screen_image_null_safe;
 
 import 'package:flutter/material.dart';
 
 class FullScreenWidget extends StatelessWidget {
   FullScreenWidget(
-      {@required this.child,
+      {required this.child,
       this.backgroundColor = Colors.black,
       this.backgroundIsTransparent = true,
       this.disposeLevel});
@@ -12,10 +12,10 @@ class FullScreenWidget extends StatelessWidget {
   final Widget child;
   final Color backgroundColor;
   final bool backgroundIsTransparent;
-  final DisposeLevel disposeLevel;
+  final DisposeLevel? disposeLevel;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -43,7 +43,7 @@ enum DisposeLevel { High, Medium, Low }
 
 class FullScreenPage extends StatefulWidget {
   FullScreenPage(
-      {@required this.child,
+      {required this.child,
       this.backgroundColor = Colors.black,
       this.backgroundIsTransparent = true,
       this.disposeLevel = DisposeLevel.Medium});
@@ -51,16 +51,16 @@ class FullScreenPage extends StatefulWidget {
   final Widget child;
   final Color backgroundColor;
   final bool backgroundIsTransparent;
-  final DisposeLevel disposeLevel;
+  final DisposeLevel? disposeLevel;
 
   @override
   _FullScreenPageState createState() => _FullScreenPageState();
 }
 
 class _FullScreenPageState extends State<FullScreenPage> {
-  double initialPositionY = 0;
+  double? initialPositionY = 0;
 
-  double currentPositionY = 0;
+  double? currentPositionY = 0;
 
   double positionYDelta = 0;
 
@@ -68,7 +68,7 @@ class _FullScreenPageState extends State<FullScreenPage> {
 
   double disposeLimit = 150;
 
-  Duration animationDuration;
+  late Duration animationDuration;
 
   @override
   void initState() {
@@ -97,7 +97,7 @@ class _FullScreenPageState extends State<FullScreenPage> {
   void _whileVerticalDrag(details) {
     setState(() {
       currentPositionY = details.globalPosition.dy;
-      positionYDelta = currentPositionY - initialPositionY;
+      positionYDelta = currentPositionY! - initialPositionY!;
       setOpacity();
     });
   }

@@ -10,3 +10,7 @@
 
 * Full screen position animation added
 
+## [2.0.0] - May 13, 2021
+
+* Migrated to null safety
+
