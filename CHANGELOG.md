@@ -9,4 +9,8 @@
 ## [1.0.2] - February 8, 2020
 
 * Full screen position animation added
+* 
+## [2.0.0] - February 8, 2020
+
+* Nullsafety added
 

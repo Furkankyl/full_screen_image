@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 
 class FullScreenWidget extends StatelessWidget {
   FullScreenWidget(
-      {@required this.child,
+      {required this.child,
       this.backgroundColor = Colors.black,
       this.backgroundIsTransparent = true,
-      this.disposeLevel});
+      required this.disposeLevel});
 
   final Widget child;
   final Color backgroundColor;
@@ -43,7 +43,7 @@ enum DisposeLevel { High, Medium, Low }
 
 class FullScreenPage extends StatefulWidget {
   FullScreenPage(
-      {@required this.child,
+      {required this.child,
       this.backgroundColor = Colors.black,
       this.backgroundIsTransparent = true,
       this.disposeLevel = DisposeLevel.Medium});
@@ -68,13 +68,13 @@ class _FullScreenPageState extends State<FullScreenPage> {
 
   double disposeLimit = 150;
 
-  Duration animationDuration;
+  Duration animationDuration = Duration.zero;
+
 
   @override
   void initState() {
     super.initState();
     setDisposeLevel();
-    animationDuration = Duration.zero;
   }
 
   setDisposeLevel() {
